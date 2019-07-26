@@ -1,0 +1,33 @@
+#!/bin/bash
+sudo yum remove java-1.7.0-openjdk -y
+sudo yum install java-1.8.0 -y
+
+java --version
+sudo yum remove -y java
+sudo yum install -y java-1.8.0-openjdk
+
+java -cp yash-training-2019-1.0.jar com.yash.training.S3CreateBucket
+java -cp yash-training-2019-1.0.jar com.yash.training.S3ListBucket
+java -cp yash-training-2019-1.0.jar com.yash.training.S3PutObject
+java -cp yash-training-2019-1.0.jar com.yash.training.S3ListObjects
+java -cp yash-training-2019-1.0.jar com.yash.training.S3DeleteObject
+java -cp yash-training-2019-1.0.jar com.yash.training.S3DeleteBucket
+
+
+java -cp yash-training-2019-1.0.jar com.yash.training.SNSTopicCreation
+java -cp yash-training-2019-1.0.jar com.yash.training.SNSAddSubscription
+java -cp yash-training-2019-1.0.jar com.yash.training.SNSPublishMessage
+java -cp yash-training-2019-1.0.jar com.yash.training.SNSDeleteTopic
+
+
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSServiceClientStandard
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSServiceClientFIFO
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSSendMessage
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSSendMessageFIFO
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSReadFromQueue
+java -cp yash-training-2019-1.0.jar com.yash.training.SQSDeleteQueue
+
+
+yum install java
+yum install python
+to install aws cli - https://docs.aws.amazon.com/cli/latest/userguide/awscli-install-linux.html#awscli-install-linux-path

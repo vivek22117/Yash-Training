@@ -1,0 +1,8 @@
+#VALIDATE TEMPLATE
+aws cloudformation validate-template --template-body file://aws-infra/s3-bucket.json --region us-east-1
+
+#CREATE STACK
+aws --profile doubledigit cloudformation create-stack --stack-name yash-training-2019 --template-body file://aws-infra/s3-bucket.json
+
+#DELETE STACK
+aws --profile doubledigit cloudformation delete-stack --stack-name yash-training-2019

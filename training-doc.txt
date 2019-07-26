@@ -1,0 +1,34 @@
+
+
+AWS LINK:
+https://.signin.aws.amazon.com/console
+
+default password: ?
+
+yash-training-2019-2
+shraddha
+sunil
+megha
+aakruti
+rashmit
+rohit
+vivek
+rahul
+sailen
+
+
+yash-training-2019
+ranjan
+shubham
+akash
+tushar
+sneha
+shreyash
+divya
+ashwini
+saurabh
+sameer
+
+
+set new password as username@2019  example akash@2019
+
