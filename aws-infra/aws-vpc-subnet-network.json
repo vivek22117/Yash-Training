@@ -1,0 +1,438 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Cloudformation template for VPC and subnets",
+  "Parameters": {
+    "VpcCidrBlock": {
+      "Description": "Vpc CIDR block range",
+      "Type": "String",
+      "Default": "10.0.0.0/16"
+    },
+    "Environment": {
+      "Description": "Environment to deploy",
+      "Type": "String",
+      "Default": "prod"
+    }
+  },
+  "Resources": {
+    "YashTrainingVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": {
+          "Ref": "VpcCidrBlock"
+        },
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-training-vpc"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          }
+        ]
+      }
+    },
+    "PublicSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "CidrBlock": "10.0.0.0/24",
+        "AvailabilityZone": "us-east-1a",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-public-subnet-1a"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "public"
+          }
+        ]
+      }
+    },
+    "PublicSubnetB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "CidrBlock": "10.0.2.0/24",
+        "AvailabilityZone": "us-east-1b",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-public-subnet-1b"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "public"
+          }
+        ]
+      }
+    },
+    "PrivateSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "CidrBlock": "10.0.1.0/24",
+        "AvailabilityZone": "us-east-1a",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-private-subnet-1a"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "private"
+          }
+        ]
+      }
+    },
+    "PrivateSubnetB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "CidrBlock": "10.0.3.0/24",
+        "AvailabilityZone": "us-east-1b",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-private-subnet-1b"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "private"
+          }
+        ]
+      }
+    },
+    "YashTrainingIGW": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-training-igw"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          }
+        ]
+      }
+    },
+    "AttachInternetGateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "YashTrainingIGW"
+        }
+      }
+    },
+    "PublicTrafficRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "PublicTraffic-RouteTable"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "public"
+          }
+        ]
+      }
+    },
+    "PublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "AttachInternetGateway",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicTrafficRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "YashTrainingIGW"
+        }
+      }
+    },
+    "PublicSubnetARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnetA"
+        },
+        "RouteTableId": {
+          "Ref": "PublicTrafficRouteTable"
+        }
+      }
+    },
+    "PublicSubnetBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnetB"
+        },
+        "RouteTableId": {
+          "Ref": "PublicTrafficRouteTable"
+        }
+      }
+    },
+    "YashNetworkGateway": {
+      "DependsOn": "AttachInternetGateway",
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "EIP",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnetA"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "yash-ngw-1a"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          }
+        ]
+      }
+    },
+    "EIP": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    },
+    "EgressOnlyRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "YashTrainingVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Egress-RouteTable"
+          },
+          {
+            "Key": "component",
+            "Value": "cft-test"
+          },
+          {
+            "Key": "environment",
+            "Value": {
+              "Ref": "Environment"
+            }
+          },
+          {
+            "Key": "Scope",
+            "Value": "private"
+          }
+        ]
+      }
+    },
+    "EgressRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": [
+        "YashNetworkGateway",
+        "EgressOnlyRouteTable"
+      ],
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "EgressOnlyRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "YashNetworkGateway"
+        }
+      }
+    },
+    "PrivateSubnetARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PrivateSubnetA"
+        },
+        "RouteTableId": {
+          "Ref": "EgressOnlyRouteTable"
+        }
+      }
+    },
+    "PrivateSubnetBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PrivateSubnetB"
+        },
+        "RouteTableId": {
+          "Ref": "EgressOnlyRouteTable"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "StackVPC": {
+      "Description": "The ID of the VPC",
+      "Value": {
+        "Ref": "YashTrainingVPC"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-VPCId"
+        }
+      }
+    },
+    "VPCCidr": {
+      "Description": "The CIDR Block of the VPC",
+      "Value": {
+        "Fn::GetAtt": [
+          "YashTrainingVPC",
+          "CidrBlock"
+        ]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-VPCCidrBlock"
+        }
+      }
+    },
+    "PublicSubnetAId": {
+      "Description": "The ID of Public Subnet A",
+      "Value": {
+        "Ref": "PublicSubnetA"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-SubnetId-A"
+        }
+      }
+    },
+    "PublicSubnetBId": {
+      "Description": "The ID of Public Subnet B",
+      "Value": {
+        "Ref": "PublicSubnetB"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-SubnetId-B"
+        }
+      }
+    },
+    "PrivateSubnetBId": {
+      "Description": "The ID of Private Subnet B",
+      "Value": {
+        "Ref": "PrivateSubnetB"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-PrivateSubnetId-B"
+        }
+      }
+    },
+    "PrivateSubnetAId": {
+      "Description": "The ID of Private Subnet A",
+      "Value": {
+        "Ref": "PrivateSubnetA"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-PrivateSubnetId-A"
+        }
+      }
+    }
+  }
+}
